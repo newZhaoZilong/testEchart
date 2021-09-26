@@ -44,7 +44,7 @@
             // currentCurve = currentCurve === 0.01 ? 0.6 : 0.01;
             // debugger;
             let data = option["series"][0].data;
-            data.forEach((item) => {
+            data.forEach((item, index) => {
                 item.x = data[2].x;
                 item.y = data[2].y;
             });
@@ -57,7 +57,7 @@
                     item.x = item.x + Math.random() * 1000 - 500;
                     item.y = item.y + Math.random() * 1000 - 500;
                 });
-                myChart.setOption(getGraphOption(0.01));
+                myChart.setOption(option);
             }, 3000);
 
         }, 2000);
