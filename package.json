@@ -1,0 +1,11 @@
+{
+  "name": "testEchart",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:newZhaoZilong/testEchart.git",
+  "author": "赵青山 <newzhaozilong@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "echarts": "^5.2.1"
+  }
+}

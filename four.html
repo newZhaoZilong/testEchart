@@ -1,0 +1,162 @@
+<!--
+    THIS EXAMPLE WAS DOWNLOADED FROM https://echarts.apache.org/examples/zh/editor.html?c=graph-label-overlap
+-->
+<!DOCTYPE html>
+<html style="height: 100%">
+
+<head>
+  <meta charset="utf-8">
+</head>
+
+<body style="height: 100%; margin: 0">
+  <div id="container" style="height: 100%"></div>
+
+  <script type="text/javascript" src="./node_modules/echarts/dist/echarts.js"></script>
+  <script src="./chartData.js"></script>
+  <!-- Uncomment this line if you want to dataTool extension
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@{{version}}/dist/extension/dataTool.min.js"></script>
+        -->
+  <!-- Uncomment this line if you want to use gl extension
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl@2/dist/echarts-gl.min.js"></script>
+        -->
+  <!-- Uncomment this line if you want to echarts-stat extension
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-stat@latest/dist/ecStat.min.js"></script>
+        -->
+  <!-- Uncomment this line if you want to use map
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@{{version}}/map/js/china.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@{{version}}/map/js/world.js"></script>
+        -->
+  <!-- Uncomment these two lines if you want to use bmap extension
+        <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=<Your Key Here>"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@{{version}}/dist/extension/bmap.min.js"></script>
+        -->
+
+  <script type="text/javascript">
+    var dom = document.getElementById("container");
+    var myChart = echarts.init(dom);
+    var app = {};
+
+    var option;
+
+    var ROOT_PATH =
+      'https://cdn.jsdelivr.net/gh/apache/echarts-website@asf-site/examples';
+
+    var graph = getGraph();
+
+    option = {
+      tooltip: {},
+      legend: [
+        {
+          data: graph.categories.map(function (a) {
+            return a.name;
+          })
+        }
+      ],
+      series: [
+        {
+          name: 'Les Miserables',
+          type: 'graph',
+          layout: 'none',
+          data: graph.nodes,
+          links: graph.links,
+          categories: graph.categories,
+          roam: true,
+          label: {
+            show: true,
+            position: 'right',
+            formatter: '{b}'
+          },
+          labelLayout: {
+            hideOverlap: true
+          },
+          scaleLimit: {
+            min: 0.4,
+            max: 2
+          },
+          lineStyle: {
+            color: 'source',
+            curveness: 0.3
+          }
+        }
+      ]
+    };
+
+
+    myChart.setOption(option);
+
+    myChart.on('click', function (e) {
+      debugger;
+      let { dataType, seriesIndex, name } = e;
+      if (dataType === "node") {
+        let idx = option.series[0].data.findIndex((item) => item.name === name);
+        let category = option.series[0].data[idx].category;
+        debugger;
+        // myChart.dispatchAction({
+        //   type: 'legendInverseSelect',
+        // });
+        // let name = option.series[0].categories;
+        option.series[0].categories.forEach((item, index) => {
+          debugger;
+          if (category !== index) {
+            myChart.dispatchAction({
+              type: 'legendUnSelect',
+              name: item.name
+            });
+          }
+        });
+      }
+      //       dispatchAction({
+      //     type: 'select',
+
+      //     // 用 index 或 id 或 name 来指定系列。
+      //     // 可以使用数组指定多个系列。
+      //     seriesIndex?: number | number[],
+      //     seriesId?: string | string[],
+      //     seriesName?: string | string[],
+
+      //     // 数据项的 index，如果不指定也可以通过 name 属性根据名称指定数据项
+      //     dataIndex?: number | number[],
+      //     // 可选，数据项名称，在有 dataIndex 的时候忽略
+      //     name?: string | string[],
+      // })
+
+    })
+    // myChart.on('dblclick', function (e) {
+    //   let { dataType } = e;
+    //   if (dataType === "node") {
+    //     option.series[0].data = [option.series[0].data[0]]
+    //     myChart.setOption(option);
+    //   }
+    //   debugger;
+    // })
+    // myChart.on('legendselected', function (e) {
+    //   let { dataType } = e;
+    //   if (dataType === "node") {
+    //     option.series[0].data = [option.series[0].data[0]]
+    //     myChart.setOption(option);
+    //   }
+    //   debugger;
+    // })
+    // myChart.on('contextmenu', function (e) {
+    //   let { dataType } = e;
+    //   if (dataType === "node") {
+    //     option.series[0].data = [option.series[0].data[0]]
+    //     myChart.setOption(option);
+    //   }
+    //   debugger;
+    // })
+    myChart.on('legendselectchanged', function (e) {
+      let { dataType } = e;
+      if (dataType === "node") {
+        option.series[0].data = [option.series[0].data[0]]
+        myChart.setOption(option);
+      }
+      console.log(JSON.stringify(e));
+      debugger;
+    })
+
+
+  </script>
+</body>
+
+</html>
