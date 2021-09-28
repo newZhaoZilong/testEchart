@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>ECharts</title>
+    <!-- 引入刚刚下载的 ECharts 文件 -->
+    <script src="./node_modules/echarts/dist/echarts.js"></script>
+    <script src="./chartData.js"></script>
+</head>
+
+<body>
+    <!-- 为 ECharts 准备一个定义了宽高的 DOM -->
+    <div id="main" style="width: 600px;height:400px;"></div>
+    <button onclick="changeOption()">切换</button>
+    <script type="text/javascript">
+        let getId = (function () {
+            let count = 0;
+            return function () {
+                return count++;
+            }
+        })();
+        function getNum() {
+            return Math.random() * 10000 - 5000;
+        }
+        function createNode(params) {
+            let id = getId();
+            return {
+                name: 'node' + id,
+                category: id % 3,
+                x: getNum(),
+                y: getNum(),
+                ...params
+            }
+        }
+        function getNodes(len = 10, params = {}) {
+            let list = [];
+            for (let i = 0; i < len; i++) {
+                list.push(createNode(params));
+            }
+            return list;
+        }
+        function getLinks(nodes, params) {
+            let links = [];
+            for (let i = 0; i < nodes.length - 1; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    links.push({
+                        source: nodes[i].name,
+                        target: nodes[j].name,
+                        ...params
+                    });
+                }
+            }
+            return links;
+        }
+        function getColor(idx) {
+            let colorList = ["#ff0000", "#00ff00", "#0000ff"];
+            return colorList[idx];
+        }
+        function createCategory(idx) {
+            return {
+                name: 'category' + idx,
+                itemStyle: {
+                    // color: this.getColor(idx)
+                }
+            }
+        }
+        function getCategories(nodes) {
+            let categoryObj = {};
+            nodes.forEach((item) => {
+                if (!categoryObj[item.category]) {
+                    categoryObj[item.category] = createCategory(item.category);
+                }
+            });
+            let list = [];
+            for (let key in categoryObj) {
+                list.push(categoryObj[key]);
+            }
+            return list;
+        }
+        // 基于准备好的dom，初始化echarts实例
+        let myChart = echarts.init(document.getElementById('main'));
+        let nodes = getNodes(10, {
+            symbolSize: 1
+        });
+        let option = {
+            series: [{
+                type: 'graph',
+                name: 'shan',
+                layout: 'none',//
+                nodes,
+                links: getLinks(nodes, {
+                    lineStyle: { curveness: 0.3 }
+                }),
+                categories: getCategories(nodes)
+            }]
+        };
+        // debugger;
+
+        let nodes2 = nodes.map((item, index) => {
+            newItem = {
+                ...item
+            };
+            newItem.x = nodes[index % 3].x;
+            newItem.y = nodes[index % 3].y;
+            newItem.symbolSize = 20;
+            newItem.itemStyle = {
+                color: "#ffffff",
+                borderColor: "#ff0000",
+                borderWidth: 2
+            };
+            return newItem;
+        });
+        let option2 = {
+            series: [{
+                animationDurationUpdate: 5000,
+                type: 'graph',
+                name: 'shan1',
+                layout: 'none',//
+                nodes: nodes2,
+                links: getLinks(nodes2, {
+                    lineStyle: { curveness: 0.001 }
+                }),
+                categories: getCategories(nodes2)
+            }]
+        };
+        let currentOption = option;
+        myChart.setOption(option);
+
+        function changeOption() {
+            currentOption = currentOption === option ? option2 : option;
+            myChart.setOption(currentOption);
+        }
+
+        myChart.on("finished", (e) => {
+            // debugger;
+        });
+
+    </script>
+</body>
+
+</html>

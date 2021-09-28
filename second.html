@@ -13,6 +13,12 @@
     <!-- 为 ECharts 准备一个定义了宽高的 DOM -->
     <div id="main" style="width: 600px;height:400px;"></div>
     <script type="text/javascript">
+        let getId = (function () {
+            let count = 0;
+            return function () {
+                return count++;
+            }
+        })();
         // 基于准备好的dom，初始化echarts实例
         let myChart = echarts.init(document.getElementById('main'));
 
@@ -23,7 +29,20 @@
             serie.data.forEach(item => {
                 item.x = item.x + Math.random() * 1000 - 500;
                 item.y = item.y + Math.random() * 1000 - 500;
-                item.symbolSize = 20;
+                // item.id = getId();
+                if (curveness < 0.1) {
+                    item.symbolSize = 20;
+                    item.itemStyle = {
+                        color: "#ffffff",
+                        borderColor: "#000000",
+                        borderWidth: 2
+                    };
+                }
+            });
+            // debugger;
+            serie.data = option["series"][0].data.filter((item, index) => {
+                if (curveness > 0.1) return true;
+                return index > 0;
             });
             serie.lineStyle = {
                 color: "source",
@@ -33,7 +52,7 @@
             };
             serie.id = 'Score';
             serie.universalTransition = true;
-            serie.animationDurationUpdate = 1000;
+            serie.animationDurationUpdate = 5000;
             return option;
         }
 
@@ -42,23 +61,40 @@
 
         setTimeout(() => {
             // currentCurve = currentCurve === 0.01 ? 0.6 : 0.01;
-            // debugger;
-            let data = option["series"][0].data;
-            data.forEach((item, index) => {
-                item.x = data[2].x;
-                item.y = data[2].y;
+            //     // debugger;
+            let list = option["series"][0].data;
+            list.forEach((item, index) => {
+                item.x = list[index % 2].x;
+                item.y = list[index % 2].y;
             });
-
+            option["series"][0].lineStyle = {
+                color: "source",
+                curveness: 0.001,//线条弯曲度
+                opacity: 1,//线条透明度
+                width: 2,//线条宽度
+            };
+            debugger;
             myChart.setOption(option);
-            // 使用 notMerge 的形式可以移除坐标轴
-            // myChart.setOption(getGraphOption(currentCurve), true);
+
             setTimeout(() => {
-                data.forEach((item) => {
-                    item.x = item.x + Math.random() * 1000 - 500;
-                    item.y = item.y + Math.random() * 1000 - 500;
-                });
-                myChart.setOption(option);
-            }, 3000);
+                setTimeout(() => {
+                    option["series"][0].data.pop();
+                    option["series"][0].data.pop();
+                    option["series"][0].data.pop();
+                    myChart.setOption(option);
+                }, 6000);
+
+            }, 6000);
+
+            // myChart.setOption(getGraphOption(currentCurve));
+
+            //     // setTimeout(() => {
+            //     //     data.forEach((item) => {
+            //     //         item.x = item.x + Math.random() * 1000 - 500;
+            //     //         item.y = item.y + Math.random() * 1000 - 500;
+            //     //     });
+            //     //     myChart.setOption(option);
+            //     // }, 3000);
 
         }, 2000);
         // debugger;
